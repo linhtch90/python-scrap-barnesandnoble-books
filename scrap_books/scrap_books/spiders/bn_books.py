@@ -9,6 +9,7 @@ class BNBooksSpider(scrapy.Spider):
         init_url,
     ]
     next_url = ''
+    
     def parse(self, response):
         print('*** This is parse function ***')
         
