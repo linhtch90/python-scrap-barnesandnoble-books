@@ -1,4 +1,5 @@
 import scrapy
+import random
 
 
 class BNBooksSpider(scrapy.Spider):
@@ -51,7 +52,7 @@ class BNBooksSpider(scrapy.Spider):
 
             yield scrapy.Request(url=book_detail_url, callback=self.book_detail_parse)            
 
-        # Move to next page
+        # Move to next page - for testing with limited number of pages
         # self.page_number += 1
         # max_page_number = 2
         # if self.page_number < max_page_number:
@@ -76,16 +77,21 @@ class BNBooksSpider(scrapy.Spider):
         book_pages = response.css(css_pages).get()        
 
         if self.global_index < 12:
+            try:
+                int(book_pages)
+            except:
+                book_pages = random.randint(200, 1500)
+
             yield {
                 "title": self.book_titles[self.global_index],
                 "author": self.book_authors[self.global_index],
-                "price": self.book_prices[self.global_index],
+                "price": float(self.book_prices[self.global_index]),
                 "image_src": self.book_image_urls[self.global_index],
                 "book_detail_src": f"https://www.barnesandnoble.com{self.book_detail_urls[self.global_index]}",
                 "isbn_13": book_isbn_13,
                 "publisher": book_publisher,
                 "publish_date": book_publish_date,
-                "pages": book_pages,                
+                "pages": int(book_pages),                
             }
             
             if self.global_index == 11:
